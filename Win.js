@@ -1,5 +1,5 @@
 const { remote, ipcRenderer } = require('electron')
-const WindowsBox = remote.require('@huangfude/electron-vue-windows')
+const WindowsBox = remote.require('electron-windows-vue')
 const events = require('events')
 
 class Win {

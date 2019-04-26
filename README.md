@@ -1,5 +1,6 @@
 ## 说明
-在[electron-vue-windows](https://github.com/hxkuc/electron-vue-windows)插件的基础上，做了些删减。
+
+在[electron-vue-windows](https://github.com/hxkuc/electron-vue-windows)插件的基础上，做了些删减和修改。需要配合自定义blank使用。
 
 ## 功能介绍
 
@@ -11,13 +12,13 @@
 首先安装electron-vue
 然后安装此插件执行如下操作
 ```
-npm i -S @huangfude/electron-vue-windows
+npm i -S electron-windows-vue
 ```
 在renderer/main.js里初始化加入以下代码（注意本插件依赖于vue和vue-router需要在vue和vue-router初始化完毕再加载）
 ```
 import Vue from 'vue'
 import router from './router' // 此处router文件为你的路由配置文件
-import Win from '@huangfude/electron-vue-windows'
+import Win from 'electron-windows-vue'
 // 初始化插件，要传入实例化的路由
 Win.init(router, {
   freeWindowNum: 2, // 初始空闲窗口数量（选填：默认为1）
