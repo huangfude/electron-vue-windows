@@ -1,5 +1,5 @@
 const { remote, ipcRenderer } = require('electron')
-const WindowsBox = remote.require('electron-vue-windows')
+const WindowsBox = remote.require('@huangfude/electron-vue-windows')
 const events = require('events')
 
 class Win {
@@ -15,14 +15,16 @@ class Win {
   openWin (option, isWin) {
     let win = isWin ? option : this.createWin(option)
     win.show()
+
+    // win.webContents.openDevTools()
     // 防止对象被销毁
-    let winId = win.id
-    this.Event.removeAllListeners('_openWindowMsg' + winId)
-    return new Promise((resolve, reject) => {
-      this.Event.once('_openWindowMsg' + winId, (data) => {
-        resolve(data.data)
-      })
-    })
+    // let winId = win.id
+    // this.Event.removeAllListeners('_openWindowMsg' + winId)
+    // return new Promise((resolve, reject) => {
+    //   this.Event.once('_openWindowMsg' + winId, (data) => {
+    //     resolve(data.data)
+    //   })
+    // })
   }
 
   /*
@@ -83,16 +85,7 @@ class Win {
     if (option.windowConfig.reuse && !option.windowConfig.name) {
       throw new Error('复用窗口必须定义窗口name')
     }
-    console.log(option)
-    // vibrancy改为选择性安装
-    if (option.windowConfig.vibrancy) {
-      try {
-        require('@hxkuc/electron-vibrancy')
-      } catch (e) {
-        console.warn('please npm install @hxkuc/electron-vibrancy if you want use vibrancy window')
-        throw new Error(e)
-      }
-    }
+    // console.log(option)
     // 暂时只能允许传递字符串
     return this.WindowsBox.getFreeWindow(JSON.stringify(option))
   }
@@ -107,21 +100,18 @@ class Win {
   /*
    * 初始化
    */
-  init (router, config) {
-    // 初始化router，增加空白路由__BACKGROUND__
-    router.options.routes.push({path: '/__BACKGROUND__', component: { template: '<div></div>' }})
-    router.addRoutes(router.options.routes)
+  init (config) {
     // 初始化box
     if (!this.WindowsBox) {
       this.WindowsBox = new WindowsBox(config)
     }
-    this.addEventListenerForWindow(router)
+    // this.addEventListenerForWindow()
   }
 
   /*
    * 给新窗口绑定close和resize事件（如果页面刷新要手动解除之前的监听事件）
    */
-  addEventListenerForWindow (router) {
+  addEventListenerForWindow () {
     let eventFun = (event, arg) => {
       this.Event.emit('_windowToMsg', arg)
     }
@@ -170,7 +160,11 @@ class Win {
     // 注意ipcRenderer是属于webContents下的，会随着页面刷新重载，所以刷新的时候不需要手动清除监听
     // 监听路由变化
     ipcRenderer.on('_changeModelPath', (event, arg) => {
-      router.push({ path: arg })
+      let windowsHref=window.location.href;
+      let locationURL =windowsHref.substring(0,windowsHref.indexOf("#")+1);
+      this.win.webContents.executeJavaScript(window.location.href=locationURL + arg)
+      // router.push({ path: arg })
+
     })
 
     ipcRenderer.on('_openWindowMsg', (event, data) => {
@@ -257,19 +251,6 @@ class Win {
     let winList = this.WindowsBox.getWindowList()
     let winInfo = winList.filter(row => row.name === name).shift()
     return winInfo ? remote.BrowserWindow.fromId(winInfo.id) : null
-  }
-
-  /*
-   * 动画
-   */
-  animation (option) {
-    if (!option.win) {
-      option.win = this.win
-    }
-    option.time = option.time || 1000
-    option.graphs = option.graphs || 'Exponential.Out'
-    console.log(option)
-    this.WindowsBox.animation(option)
   }
 
   /*
