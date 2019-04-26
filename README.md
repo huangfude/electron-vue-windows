@@ -11,13 +11,13 @@
 首先安装electron-vue
 然后安装此插件执行如下操作
 ```
-npm i -S electron-vue-windows
+npm i -S @huangfude/electron-vue-windows
 ```
 在renderer/main.js里初始化加入以下代码（注意本插件依赖于vue和vue-router需要在vue和vue-router初始化完毕再加载）
 ```
 import Vue from 'vue'
 import router from './router' // 此处router文件为你的路由配置文件
-import Win from 'electron-vue-windows'
+import Win from '@huangfude/electron-vue-windows'
 // 初始化插件，要传入实例化的路由
 Win.init(router, {
   freeWindowNum: 2, // 初始空闲窗口数量（选填：默认为1）
