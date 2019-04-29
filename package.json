@@ -1,6 +1,6 @@
 {
   "name": "electron-windows-vue",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "",
   "main": "./index.js",
   "scripts": {
@@ -10,9 +10,7 @@
     "type": "git",
     "url": "https://github.com/huangfude/electron-vue-windows.git"
   },
-  "dependencies": {
-
-  },
+  "dependencies": {},
   "devDependencies": {
     "electron-rebuild": "^1.8.4"
   },
