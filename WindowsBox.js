@@ -180,7 +180,6 @@ class WindowsBox {
     if (win.webContents.isLoading()) {
         console.log('isLoading');
         // win.webContents.reload();
-        console.log(win.webContents.isCrashed());
         console.log(win.webContents.getURL());
         if(win.webContents.getURL() == ""){
           console.log('URL is blank');

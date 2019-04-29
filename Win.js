@@ -105,13 +105,31 @@ class Win {
     if (!this.WindowsBox) {
       this.WindowsBox = new WindowsBox(config)
     }
-    // this.addEventListenerForWindow()
+	// 在自定义的blank.html页面中添加监听 ipcRenderer.on('_changeModelPath',(event, arg))
+  }
+  
+  init (router, config) {
+	// 初始化router，增加空白路由__BACKGROUND__
+    router.options.routes.push({path: '/__BACKGROUND__', component: { template: '<div></div>' }})
+    router.addRoutes(router.options.routes)
+    // 初始化box
+    if (!this.WindowsBox) {
+      this.WindowsBox = new WindowsBox(config)
+    }
+    this.addEventListenerPath(router)
+	// this.addEventListenerForWindow(router)
   }
 
+  addEventListenerPath(router){
+	  // 监听路由变化
+    ipcRenderer.on('_changeModelPath', (event, arg) => {
+      router.push({ path: arg })
+    })
+  }
   /*
    * 给新窗口绑定close和resize事件（如果页面刷新要手动解除之前的监听事件）
    */
-  addEventListenerForWindow () {
+  addEventListenerForWindow (router) {
     let eventFun = (event, arg) => {
       this.Event.emit('_windowToMsg', arg)
     }
@@ -160,11 +178,7 @@ class Win {
     // 注意ipcRenderer是属于webContents下的，会随着页面刷新重载，所以刷新的时候不需要手动清除监听
     // 监听路由变化
     ipcRenderer.on('_changeModelPath', (event, arg) => {
-      let windowsHref=window.location.href;
-      let locationURL =windowsHref.substring(0,windowsHref.indexOf("#")+1);
-      this.win.webContents.executeJavaScript(window.location.href=locationURL + arg)
-      // router.push({ path: arg })
-
+      router.push({ path: arg })
     })
 
     ipcRenderer.on('_openWindowMsg', (event, data) => {
