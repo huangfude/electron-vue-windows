@@ -12,8 +12,9 @@ class Win {
   /*
    * 通用弹窗函数
    */
-  openWin (option, isWin) {
-    let win = isWin ? option : this.createWin(option)
+  openWin (option) {
+	
+    let win = this.createWin(option)
     win.show()
 
     // win.webContents.openDevTools()
@@ -81,10 +82,6 @@ class Win {
       option.windowConfig = {}
     }
     option.windowConfig.fromWinId = this.win.id
-    // 如果复用窗口必须有name参数
-    if (option.windowConfig.reuse && !option.windowConfig.name) {
-      throw new Error('复用窗口必须定义窗口name')
-    }
     // console.log(option)
     // 暂时只能允许传递字符串
     return this.WindowsBox.getFreeWindow(JSON.stringify(option))
@@ -105,31 +102,13 @@ class Win {
     if (!this.WindowsBox) {
       this.WindowsBox = new WindowsBox(config)
     }
-	// 在自定义的blank.html页面中添加监听 ipcRenderer.on('_changeModelPath',(event, arg))
-  }
-  
-  init (router, config) {
-	// 初始化router，增加空白路由__BACKGROUND__
-    router.options.routes.push({path: '/__BACKGROUND__', component: { template: '<div></div>' }})
-    router.addRoutes(router.options.routes)
-    // 初始化box
-    if (!this.WindowsBox) {
-      this.WindowsBox = new WindowsBox(config)
-    }
-    this.addEventListenerPath(router)
-	// this.addEventListenerForWindow(router)
+    // this.addEventListenerForWindow()
   }
 
-  addEventListenerPath(router){
-	  // 监听路由变化
-    ipcRenderer.on('_changeModelPath', (event, arg) => {
-      router.push({ path: arg })
-    })
-  }
   /*
    * 给新窗口绑定close和resize事件（如果页面刷新要手动解除之前的监听事件）
    */
-  addEventListenerForWindow (router) {
+  addEventListenerForWindow () {
     let eventFun = (event, arg) => {
       this.Event.emit('_windowToMsg', arg)
     }
@@ -178,7 +157,11 @@ class Win {
     // 注意ipcRenderer是属于webContents下的，会随着页面刷新重载，所以刷新的时候不需要手动清除监听
     // 监听路由变化
     ipcRenderer.on('_changeModelPath', (event, arg) => {
-      router.push({ path: arg })
+      let windowsHref=window.location.href;
+      let locationURL =windowsHref.substring(0,windowsHref.indexOf("#")+1);
+      this.win.webContents.executeJavaScript(window.location.href=locationURL + arg)
+      // router.push({ path: arg })
+
     })
 
     ipcRenderer.on('_openWindowMsg', (event, data) => {

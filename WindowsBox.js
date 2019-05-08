@@ -129,7 +129,7 @@ class WindowsBox {
     option = option ? JSON.parse(option) : {}
     let freeWindow, freeWindowInfo
     // 拉出窗口
-    freeWindowInfo = this.getNewWindow()
+	freeWindowInfo = this.getNewWindow()
     freeWindow = BrowserWindow.fromId(freeWindowInfo.id)
     // 路由跳转
     this.windowRouterChange(freeWindow, option.windowConfig.router)
@@ -180,7 +180,6 @@ class WindowsBox {
     if (win.webContents.isLoading()) {
         console.log('isLoading');
         // win.webContents.reload();
-        console.log(win.webContents.getURL());
         if(win.webContents.getURL() == ""){
           console.log('URL is blank');
         }
