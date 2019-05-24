@@ -169,6 +169,7 @@ class WindowsBox {
     config.resizable = option.resizable || true
     config.alwaysOnTop = option.alwaysOnTop || false
     config.skipTaskbar = option.skipTaskbar || false
+	config.autoHideMenuBar = option.autoHideMenuBar || true
     return config
   }
 
@@ -231,6 +232,12 @@ class WindowsBox {
     if (config.title) {
       freeWindow.setTitle(config.title)
     }
+	// 是否隐藏菜单
+	if(config.autoHideMenuBar === false){
+		freeWindow.setAutoHideMenuBar(false)
+	} else {
+		freeWindow.setMenu(null)
+	}
   }
 
   /*
